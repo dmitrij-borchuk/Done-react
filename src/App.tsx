@@ -1,24 +1,24 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
+import { getItems } from './api/items'
+import { TodoItem } from './components/todoItem/TodoItem'
+import { ITodoItem } from './types/TodoItem'
+import { TodoList } from './components/todoList/TodoList'
 
 function App() {
+  const [items, setItems] = useState<ITodoItem[]>([])
+  useEffect(() => {
+    const effect = async () => {
+      const response = await getItems()
+      setItems(response.data)
+    }
+    effect()
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p data-testid="init-instruction">
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TodoList list={items} />
     </div>
   )
 }
