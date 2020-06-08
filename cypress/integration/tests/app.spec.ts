@@ -35,6 +35,36 @@ context('App', () => {
   it('should have add button', () => {
     cy.getById('add-btn').should('exist')
   })
+
+  it('should have item menu', () => {
+    cy.route({
+      method: 'GET',
+      url: `${Cypress.env('serverUrl')}/data/items`,
+      response: [
+        { title: 'ToDo 1', done: false, objectId: 'id1' },
+        { title: 'ToDo 2', done: true, objectId: 'id2' },
+      ],
+    })
+    cy.getById('item-menu-btn').its('length').should('eq', 2)
+  })
+
+  it('should have delete button for item', () => {
+    cy.route({
+      method: 'GET',
+      url: `${Cypress.env('serverUrl')}/data/items`,
+      response: [
+        { title: 'ToDo 1', done: false, objectId: 'id1' },
+        { title: 'ToDo 2', done: true, objectId: 'id2' },
+      ],
+    })
+    cy.route({
+      method: 'DELETE',
+      url: `${Cypress.env('serverUrl')}/data/items/*`,
+    }).as('deleteItem')
+    cy.getById('item-menu-btn').first().click()
+    cy.getById('item-delete-btn').first().click()
+    cy.wait('@deleteItem').its('url').should('include', '/id1')
+  })
 })
 
 context('Add item screen', () => {

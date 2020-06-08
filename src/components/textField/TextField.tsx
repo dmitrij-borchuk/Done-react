@@ -1,6 +1,5 @@
 import React from 'react'
 import cn from 'classnames'
-// import './styles.css'
 
 interface IProps {
   fullWidth?: boolean
@@ -16,7 +15,6 @@ export const TextField: React.FC<
   helperText = '',
   ...others
 }) => {
-  // TODO: full
   return (
     <>
       <input

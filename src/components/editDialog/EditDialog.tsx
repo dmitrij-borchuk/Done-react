@@ -7,8 +7,11 @@ import { RoundButton } from '../roundButton/RoundButton'
 import { ReactComponent as AddIcon } from '../../assets/add-24px.svg'
 import { ReactComponent as DoneIcon } from '../../assets/done-24px.svg'
 import { ReactComponent as BackIcon } from '../../assets/keyboard_backspace-24px.svg'
+import { emptyFn } from '../../utils/common'
 
-const emptyFn = () => {}
+const emptyItem = {
+  title: '',
+}
 
 interface IProps {
   item?: ITodoItem
@@ -18,7 +21,7 @@ interface IProps {
 }
 export const EditDialog: React.FC<IProps> = (props) => {
   const {
-    item,
+    item = emptyItem,
     className = '',
     onSubmit = emptyFn,
     onBackClick = emptyFn,

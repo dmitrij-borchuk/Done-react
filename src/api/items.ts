@@ -10,3 +10,7 @@ export const getItems = () => {
 export const createItem = (data: ITodoItem) => {
   return axios.post<ITodoItem>(`${API_BASE}/data/items`, data)
 }
+
+export const deleteItem = (id: string) => {
+  return axios.delete<{ deletionTime: number }>(`${API_BASE}/data/items/${id}`)
+}

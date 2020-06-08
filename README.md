@@ -1,3 +1,12 @@
+## Tests
+
+Run these two command it separate terminals
+
+```
+npm run tart
+npm run cypress
+```
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

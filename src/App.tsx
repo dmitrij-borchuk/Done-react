@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { Snackbar } from '@material/react-snackbar'
-import { getItems, createItem } from './api/items'
+import { getItems, createItem, deleteItem } from './api/items'
 import { ITodoItem } from './types/TodoItem'
 import { TodoList } from './components/todoList/TodoList'
 import { RoundButton } from './components/roundButton/RoundButton'
@@ -24,6 +24,14 @@ function App() {
   const onBackClick = useCallback(() => {
     setShowEdit(false)
   }, [])
+  const onDelete = useCallback(
+    async (data: ITodoItem) => {
+      await deleteItem(data.objectId)
+      setItems(items.filter((item) => item.objectId !== data.objectId))
+    },
+    [items],
+  )
+
   useEffect(() => {
     const effect = async () => {
       const response = await getItems()
@@ -33,8 +41,8 @@ function App() {
   }, [])
 
   return (
-    <div className="container mx-auto px-4 pt-4 text-gray-700">
-      <div className="flex flex-row-reverse">
+    <div className="container h-screen mx-auto px-4 pt-4 text-gray-700">
+      <div className="absolute bottom-0 right-0 pb-4 pr-4">
         <RoundButton
           className="text-white"
           onClick={() => setShowEdit(true)}
@@ -43,7 +51,7 @@ function App() {
           <AddIcon height="50%" width="50%" className="fill-current" />
         </RoundButton>
       </div>
-      <TodoList list={items} />
+      <TodoList list={items} onDelete={onDelete} />
 
       {showEdit && (
         <EditDialog
