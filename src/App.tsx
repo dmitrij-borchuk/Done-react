@@ -56,6 +56,20 @@ function App() {
     },
     [items],
   )
+  const onDoneClick = useCallback(
+    async (data: ITodoItem) => {
+      const result = await editItem({
+        ...data,
+        done: !data.done,
+      })
+      const itemIndex = items.findIndex(
+        (item) => item.objectId === result.data.objectId,
+      )
+      items.splice(itemIndex, 1, result.data)
+      setItems([...items])
+    },
+    [items],
+  )
   const onEditClick = useCallback((data: ITodoItem) => {
     setItemForEdit(data)
     setShowEdit(true)
@@ -80,7 +94,12 @@ function App() {
           <AddIcon height="50%" width="50%" className="fill-current" />
         </RoundButton>
       </div>
-      <TodoList list={items} onDelete={onDelete} onEdit={onEditClick} />
+      <TodoList
+        list={items}
+        onDelete={onDelete}
+        onEdit={onEditClick}
+        onDoneClick={onDoneClick}
+      />
 
       {showEdit && (
         <EditDialog

@@ -30,6 +30,7 @@ context('App', () => {
       response: [{ title: 'ToDo 1', done: true, objectId: 'id1' }],
     })
     cy.getById('list-item').first().should('have.class', 'line-through')
+    cy.getById('item-done-btn').first().should('be.checked')
   })
 
   it('should have add button', () => {
@@ -43,8 +44,17 @@ context('Item', () => {
     cy.route({
       method: 'GET',
       url: `${Cypress.env('serverUrl')}/data/items`,
-      response: [{ title: 'ToDo 1', done: true, objectId: 'id1' }],
+      response: [
+        { title: 'ToDo 1', done: false, objectId: 'id1' },
+        { title: 'ToDo 2', done: true, objectId: 'id2' },
+      ],
     })
+    cy.route({
+      method: 'PUT',
+      url: `${Cypress.env('serverUrl')}/data/items/*`,
+      response: { title: 'ToDo 1', done: true, objectId: 'id1' },
+    }).as('putItem')
+
     cy.visit('http://localhost:3000/')
   })
 
@@ -93,6 +103,36 @@ context('Item', () => {
     cy.wait('@putItem')
       .its('requestBody')
       .should('include', { title: 'edit task 1' })
+  })
+
+  it('should have "done" checkbox', () => {
+    cy.getById('item-done-btn').its('length').should('be', 2)
+  })
+
+  it('should have "done" checkbox to mark item as done', () => {
+    cy.route({
+      method: 'GET',
+      url: `${Cypress.env('serverUrl')}/data/items`,
+      response: [
+        { title: 'ToDo 1', done: false, objectId: 'id1' },
+        { title: 'ToDo 2', done: true, objectId: 'id2' },
+      ],
+    })
+    cy.getById('item-done-btn').first().click()
+    cy.wait('@putItem').its('requestBody').should('include', { done: true })
+  })
+
+  it('should have "done" checkbox to mark item as NOT done', () => {
+    cy.route({
+      method: 'GET',
+      url: `${Cypress.env('serverUrl')}/data/items`,
+      response: [
+        { title: 'ToDo 2', done: true, objectId: 'id2' },
+        { title: 'ToDo 1', done: false, objectId: 'id1' },
+      ],
+    })
+    cy.getById('item-done-btn').first().click()
+    cy.wait('@putItem').its('requestBody').should('include', { done: false })
   })
 })
 
