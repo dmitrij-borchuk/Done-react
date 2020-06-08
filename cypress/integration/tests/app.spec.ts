@@ -35,8 +35,20 @@ context('App', () => {
   it('should have add button', () => {
     cy.getById('add-btn').should('exist')
   })
+})
 
-  it('should have item menu', () => {
+context('Item', () => {
+  beforeEach(() => {
+    cy.server()
+    cy.route({
+      method: 'GET',
+      url: `${Cypress.env('serverUrl')}/data/items`,
+      response: [{ title: 'ToDo 1', done: true, objectId: 'id1' }],
+    })
+    cy.visit('http://localhost:3000/')
+  })
+
+  it('should have menu', () => {
     cy.route({
       method: 'GET',
       url: `${Cypress.env('serverUrl')}/data/items`,
@@ -48,7 +60,7 @@ context('App', () => {
     cy.getById('item-menu-btn').its('length').should('eq', 2)
   })
 
-  it('should have delete button for item', () => {
+  it('should have delete button', () => {
     cy.route({
       method: 'GET',
       url: `${Cypress.env('serverUrl')}/data/items`,
@@ -64,6 +76,23 @@ context('App', () => {
     cy.getById('item-menu-btn').first().click()
     cy.getById('item-delete-btn').first().click()
     cy.wait('@deleteItem').its('url').should('include', '/id1')
+  })
+
+  it('should have edit button', () => {
+    cy.route({
+      method: 'PUT',
+      url: `${Cypress.env('serverUrl')}/data/items/*`,
+    }).as('putItem')
+
+    cy.getById('item-menu-btn').first().click()
+    cy.getById('item-edit-btn').first().click()
+    cy.getById('item-edit-dialog').should('exist')
+    cy.getById('edit-dialog-title-field').clear()
+    cy.getById('edit-dialog-title-field').type('edit task 1')
+    cy.getById('edit-dialog-edit-btn').click()
+    cy.wait('@putItem')
+      .its('requestBody')
+      .should('include', { title: 'edit task 1' })
   })
 })
 

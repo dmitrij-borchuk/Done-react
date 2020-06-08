@@ -6,13 +6,24 @@ import { emptyFn } from '../../utils/common'
 interface IProps {
   list: ITodoItem[]
   onDelete?: (item: ITodoItem) => void
+  onEdit?: (item: ITodoItem) => void
 }
-export const TodoList: React.FC<IProps> = ({ list, onDelete = emptyFn }) => {
-  const handleOnDelete = useCallback(
+export const TodoList: React.FC<IProps> = ({
+  list,
+  onDelete = emptyFn,
+  onEdit = emptyFn,
+}) => {
+  const handleDelete = useCallback(
     (item: ITodoItem) => () => {
       onDelete(item)
     },
     [onDelete],
+  )
+  const handleEdit = useCallback(
+    (item: ITodoItem) => () => {
+      onEdit(item)
+    },
+    [onEdit],
   )
 
   return (
@@ -22,7 +33,8 @@ export const TodoList: React.FC<IProps> = ({ list, onDelete = emptyFn }) => {
           key={item.objectId}
           title={item.title}
           done={item.done}
-          onDelete={handleOnDelete(item)}
+          onDelete={handleDelete(item)}
+          onEdit={handleEdit(item)}
         />
       ))}
     </div>

@@ -7,8 +7,9 @@ import { emptyFn } from '../../utils/common'
 
 interface IItemMenuProps {
   onDelete: () => void
+  onEdit: () => void
 }
-const ItemMenu: React.FC<IItemMenuProps> = ({ onDelete }) => {
+const ItemMenu: React.FC<IItemMenuProps> = ({ onDelete, onEdit }) => {
   return (
     <>
       <button
@@ -18,6 +19,13 @@ const ItemMenu: React.FC<IItemMenuProps> = ({ onDelete }) => {
       >
         Delete
       </button>
+      <button
+        onClick={onEdit}
+        className="px-3 text-xl font-light"
+        data-testid="item-edit-btn"
+      >
+        Edit
+      </button>
     </>
   )
 }
@@ -26,9 +34,10 @@ interface ITodoItemProps {
   title: string
   done: boolean
   onDelete?: () => void
+  onEdit?: () => void
 }
 export const TodoItem: React.FC<ITodoItemProps> = (props) => {
-  const { title, done, onDelete = emptyFn } = props
+  const { title, done, onDelete = emptyFn, onEdit = emptyFn } = props
 
   return (
     <div className="flex justify-between">
@@ -39,7 +48,7 @@ export const TodoItem: React.FC<ITodoItemProps> = (props) => {
         {title}
       </div>
 
-      <DropMenu content={<ItemMenu onDelete={onDelete} />}>
+      <DropMenu content={<ItemMenu onDelete={onDelete} onEdit={onEdit} />}>
         <button data-testid="item-menu-btn">
           <MenuIcon />
         </button>

@@ -18,12 +18,13 @@ export const DropMenu: React.FC<
       closeOnOutsideClick
       closeOnDisappear="partial"
       // render-prop to render our layer
-      renderLayer={({ layerProps, isOpen }) =>
+      renderLayer={({ layerProps, isOpen, close }) =>
         // only render on `isOpen`
         isOpen && (
           <div
             // for calculation stuff
             ref={layerProps.ref}
+            onClick={close}
             className="rounded border p-2 bg-white"
             style={{
               // inject calculated positional styles

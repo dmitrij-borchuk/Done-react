@@ -14,3 +14,7 @@ export const createItem = (data: ITodoItem) => {
 export const deleteItem = (id: string) => {
   return axios.delete<{ deletionTime: number }>(`${API_BASE}/data/items/${id}`)
 }
+
+export const editItem = (data: ITodoItem) => {
+  return axios.put<ITodoItem>(`${API_BASE}/data/items/${data.objectId}`, data)
+}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import cn from 'classnames'
 import { useForm, Controller } from 'react-hook-form'
 import { ITodoItem } from '../../types/TodoItem'
@@ -21,19 +21,28 @@ interface IProps {
 }
 export const EditDialog: React.FC<IProps> = (props) => {
   const {
-    item = emptyItem,
+    item,
     className = '',
     onSubmit = emptyFn,
     onBackClick = emptyFn,
   } = props
   const { handleSubmit, errors, control } = useForm<ITodoItem>({
-    defaultValues: item,
+    defaultValues: item || emptyItem,
   })
+  const submit = useCallback(
+    (data: ITodoItem) => {
+      onSubmit({
+        ...item,
+        ...data,
+      })
+    },
+    [onSubmit, item],
+  )
   const isNew = !item
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(submit)}
       className={cn('flex justify-between flex-col', className)}
       data-testid="item-edit-dialog"
     >

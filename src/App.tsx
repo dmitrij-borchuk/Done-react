@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { Snackbar } from '@material/react-snackbar'
-import { getItems, createItem, deleteItem } from './api/items'
+import { getItems, createItem, deleteItem, editItem } from './api/items'
 import { ITodoItem } from './types/TodoItem'
 import { TodoList } from './components/todoList/TodoList'
 import { RoundButton } from './components/roundButton/RoundButton'
@@ -11,8 +11,9 @@ import './App.css'
 function App() {
   const [items, setItems] = useState<ITodoItem[]>([])
   const [showEdit, setShowEdit] = useState(false)
+  const [itemForEdit, setItemForEdit] = useState<ITodoItem | undefined>()
   const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false)
-  const onSubmit = useCallback(
+  const create = useCallback(
     async (data: ITodoItem) => {
       const response = await createItem(data)
       setItems([...items, response.data])
@@ -20,6 +21,30 @@ function App() {
       setShowSuccessSnackbar(true)
     },
     [items],
+  )
+  const edit = useCallback(
+    async (data: ITodoItem) => {
+      await editItem(data)
+      const editedItemIndex = items.findIndex(
+        (item) => item.objectId === data.objectId,
+      )
+      items.splice(editedItemIndex, 1, data)
+      setItems([...items])
+      setShowEdit(false)
+      setItemForEdit(undefined)
+      setShowSuccessSnackbar(true)
+    },
+    [items],
+  )
+  const onSubmit = useCallback(
+    async (data: ITodoItem) => {
+      if (data.objectId) {
+        return edit(data)
+      }
+
+      return create(data)
+    },
+    [edit, create],
   )
   const onBackClick = useCallback(() => {
     setShowEdit(false)
@@ -31,6 +56,10 @@ function App() {
     },
     [items],
   )
+  const onEditClick = useCallback((data: ITodoItem) => {
+    setItemForEdit(data)
+    setShowEdit(true)
+  }, [])
 
   useEffect(() => {
     const effect = async () => {
@@ -41,7 +70,7 @@ function App() {
   }, [])
 
   return (
-    <div className="container h-screen mx-auto px-4 pt-4 text-gray-700">
+    <div className="container h-screen mx-auto px-4 pt-4 text-gray-700 relative">
       <div className="absolute bottom-0 right-0 pb-4 pr-4">
         <RoundButton
           className="text-white"
@@ -51,12 +80,13 @@ function App() {
           <AddIcon height="50%" width="50%" className="fill-current" />
         </RoundButton>
       </div>
-      <TodoList list={items} onDelete={onDelete} />
+      <TodoList list={items} onDelete={onDelete} onEdit={onEditClick} />
 
       {showEdit && (
         <EditDialog
           onSubmit={onSubmit}
           onBackClick={onBackClick}
+          item={itemForEdit}
           className="absolute inset-0 bg-white container mx-auto px-4 py-4"
         />
       )}
@@ -65,6 +95,7 @@ function App() {
         <Snackbar
           message="Task has been saved successfully"
           actionText="dismiss"
+          onClose={() => setShowSuccessSnackbar(false)}
         />
       )}
     </div>
