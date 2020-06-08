@@ -1,7 +1,5 @@
 import React from 'react'
-import { action } from '@storybook/addon-actions'
 import { DropMenu } from './DropMenu'
-import { ITodoItem } from '../../types/TodoItem'
 
 export default {
   title: 'DropMenu',
